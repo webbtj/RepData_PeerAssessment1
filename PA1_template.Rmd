@@ -8,6 +8,15 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r}
+# extract zip file and load in resulting CSV
+unzip("activity.zip")
+activity <- read.csv("activity.csv")
+# normalize the interval (pad to 4 characters)
+activity$interval <- sprintf("%04d", activity$interval)
+# cast $date to Date type
+activity$date <- as.Date(activity$date)
+```
 
 
 ## What is mean total number of steps taken per day?
