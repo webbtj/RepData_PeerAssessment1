@@ -39,7 +39,23 @@ The media of the total number of steps taken per day is `r median(activity_sum)`
 
 
 ## What is the average daily activity pattern?
+```{r}
+# split up the steps by interval and average (mean) each group
+activity_ave <- sapply(split(activity_measured$steps, activity_measured$interval), mean)
+# create line plot
+plot(activity_ave, type="l",
+     main="Average Step per Five Minute Interval",
+     xlab="Intervals", xaxt="n", ylab="Average Steps")
+# add the x-axis
+axis(at=seq(0, length(activity_ave), by=12),
+     labels=sprintf("%04d", seq(0, 2400, by=100)),
+     las=2, side=1)
+# draw a line at the highest peak
+abline(v=which.max(activity_ave), col="green")
+```
 
+Question: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
+Answer: `r names(which.max(activity_ave))`.
 
 
 ## Imputing missing values
