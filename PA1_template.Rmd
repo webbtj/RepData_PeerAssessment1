@@ -4,7 +4,11 @@ output:
   html_document:
     keep_md: true
 ---
-
+```{r echo=FALSE}
+# set some defaults
+options(digits = 4) # limit numbers to 4 decimal places
+options(scipen = 1) # don't express numbers in scientific notation
+```
 
 ## Loading and preprocessing the data
 
@@ -20,7 +24,18 @@ activity$date <- as.Date(activity$date)
 
 
 ## What is mean total number of steps taken per day?
+```{r}
+# subset only measured observations
+activity_measured <- subset(activity, !is.na(activity$steps))
+# split up the steps by date and sum each group
+activity_sum <- sapply(split(activity_measured$steps, activity_measured$date), sum)
+# create histogram
+hist(activity_sum, breaks=20, xlab="Steps Per Day",
+     main="Histogram - Steps Per Day (Oct. & Nov.)")
+```
 
+The mean of the total number of steps taken per day is `r mean(activity_sum)`  
+The media of the total number of steps taken per day is `r median(activity_sum)`
 
 
 ## What is the average daily activity pattern?
