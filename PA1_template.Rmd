@@ -34,8 +34,8 @@ hist(activity_sum, breaks=20, xlab="Steps Per Day",
      main="Histogram - Steps Per Day (Oct. & Nov.)")
 ```
 
-The mean of the total number of steps taken per day is `r mean(activity_sum)`  
-The media of the total number of steps taken per day is `r median(activity_sum)`
+The mean of the total number of steps taken per day is **`r mean(activity_sum)`**.  
+The media of the total number of steps taken per day is **`r median(activity_sum)`**.
 
 
 ## What is the average daily activity pattern?
@@ -55,11 +55,48 @@ abline(v=which.max(activity_ave), col="green")
 ```
 
 Question: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
-Answer: `r names(which.max(activity_ave))`.
+Answer: **`r names(which.max(activity_ave))`**.
 
 
 ## Imputing missing values
+```{r}
+# count the number of missing measurements
+missing_measurements <- sum(is.na(activity$steps))
+```
+Total number of missing values in the dataset: **`r missing_measurements`**
 
+#### Strategy for Imputing Missing Values
+In order to fill in the missing data, we'll replace any missing data for a
+given interval with the mean for that interval over all observations
 
+```{r message=FALSE}
+# load dplyr
+library(dplyr)
+# for observations where the steps variable is NA
+# replace the NA with the average for that interval
+activity_imp <- mutate(activity,
+                       steps = ifelse(
+                           is.na(steps),
+                           activity_ave[interval],
+                           steps)
+                       )
+```
+
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```{r}
+# split up the steps by date and sum each group, same as above but with the imputed data
+activity_imp_sum <- sapply(split(activity_imp$steps, activity_imp$date), sum)
+# create histogram
+hist(activity_imp_sum, breaks=20, xlab="Steps Per Day",
+     main="Histogram - Steps Per Day (Oct. & Nov.)")
+```
+
+The mean of the total number of steps taken per day is **`r mean(activity_imp_sum)`**.  
+The median of the total number of steps taken per day is **`r median(activity_imp_sum)`**.
+
+Question: Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?  
+
+Answer: Yes the values do change after imputing the data. The method I chose for imputing was to replace all `NA`s with the mean for the given interval. The causes an increase in Frequency at the mean of the Steps per Day.
 
 ## Are there differences in activity patterns between weekdays and weekends?
