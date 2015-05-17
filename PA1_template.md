@@ -1,18 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-```{r echo=FALSE}
-# set some defaults
-options(digits = 4) # limit numbers to 4 decimal places
-options(scipen = 1) # don't express numbers in scientific notation
-```
+# Reproducible Research: Peer Assessment 1
+
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 # extract zip file and load in resulting CSV
 unzip("activity.zip")
 activity <- read.csv("activity.csv")
@@ -24,7 +16,8 @@ activity$date <- as.Date(activity$date)
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 # subset only measured observations
 activity_measured <- subset(activity, !is.na(activity$steps))
 # split up the steps by date and sum each group
@@ -34,12 +27,15 @@ hist(activity_sum, breaks=20, xlab="Steps Per Day",
      main="Histogram - Steps Per Day (Oct. & Nov.)")
 ```
 
-The mean of the total number of steps taken per day is **`r mean(activity_sum)`**.  
-The media of the total number of steps taken per day is **`r median(activity_sum)`**.
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+The mean of the total number of steps taken per day is **10766.1887**.  
+The media of the total number of steps taken per day is **10765**.
 
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 # split up the steps by interval and average (mean) each group
 activity_ave <- sapply(split(activity_measured$steps, activity_measured$interval), mean)
 # create line plot
@@ -54,22 +50,26 @@ axis(at=seq(0, length(activity_ave), by=12),
 abline(v=which.max(activity_ave), col="green")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
 Question: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
-Answer: **`r names(which.max(activity_ave))`**.
+Answer: **0835**.
 
 
 ## Imputing missing values
-```{r}
+
+```r
 # count the number of missing measurements
 missing_measurements <- sum(is.na(activity$steps))
 ```
-Total number of missing values in the dataset: **`r missing_measurements`**
+Total number of missing values in the dataset: **2304**
 
 #### Strategy for Imputing Missing Values
 In order to fill in the missing data, we'll replace any missing data for a
 given interval with the mean for that interval over all observations
 
-```{r message=FALSE}
+
+```r
 # load dplyr
 library(dplyr)
 # for observations where the steps variable is NA
@@ -84,7 +84,8 @@ activity_imp <- mutate(activity,
 
 Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r}
+
+```r
 # split up the steps by date and sum each group, same as above but with the imputed data
 activity_imp_sum <- sapply(split(activity_imp$steps, activity_imp$date), sum)
 # create histogram
@@ -92,15 +93,18 @@ hist(activity_imp_sum, breaks=20, xlab="Steps Per Day",
      main="Histogram - Steps Per Day (Oct. & Nov.)")
 ```
 
-The mean of the total number of steps taken per day is **`r mean(activity_imp_sum)`**.  
-The median of the total number of steps taken per day is **`r median(activity_imp_sum)`**.
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+
+The mean of the total number of steps taken per day is **10766.1887**.  
+The median of the total number of steps taken per day is **10766.1887**.
 
 Question: Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?  
 
 Answer: Yes the values do change after imputing the data. The method I chose for imputing was to replace all `NA`s with the mean for the given interval. The causes an increase in Frequency at the mean of the Steps per Day.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 # Add a factor variable for weekday/weekend
 activity_imp$day = factor(
                         weekdays(activity_imp$date) %in% c("Saturday", "Sunday"),
@@ -130,3 +134,5 @@ axis(at=seq(0, length(activity_ave), by=12),
      labels=sprintf("%04d", seq(0, 2400, by=100)),
      las=2, side=1)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
